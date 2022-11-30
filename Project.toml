@@ -1,0 +1,7 @@
+name = "ECC"
+uuid = "e93f2da7-7182-4840-8404-97c87cf749c1"
+authors = ["Emma Andrews <e.andrews@ufl.edu>"]
+version = "0.1.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
