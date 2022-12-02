@@ -1,11 +1,13 @@
+include("curves.jl")
+
 module ECC
 
 export ECPoint, multiply, reduction, reduction192, reduction224, 
        reduction256, reduction384, reduction521, set_prime, set_curve, 
-       affinify, Curve, null, p192, p224, p256, p384, p521
+       affinify, CurveEnum, null, p192, p224, p256, p384, p521
 
 # Curve enums for quick switching
-@enum Curve null = 0 p192 = 1 p224 = 2 p256 = 3 p384 = 4 p521 = 5
+@enum CurveEnum null = 0 p192 = 1 p224 = 2 p256 = 3 p384 = 4 p521 = 5
 
 # Point on elliptic curve
 mutable struct ECPoint
@@ -109,7 +111,6 @@ function Base.:*(k::BigInt, P::ECPoint)::ECPoint
     R1 = ECPoint(P.x, P.y, P.z)
     bits = ndigits(k, base=2)
     dig = digits(k, base=2)
-    println(bits)
     for i = bits:-1:1
         if dig[i] == 0
             R1 = R0 + R1

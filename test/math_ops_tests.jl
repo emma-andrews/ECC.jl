@@ -2,8 +2,8 @@ using ECC
 using Test
 
 @testset "P-192" begin
-    ECC.set_prime(0xfffffffffffffffffffffffffffffffeffffffffffffffff)
-    ECC.set_curve(p192)
+    set_prime(0xfffffffffffffffffffffffffffffffeffffffffffffffff)
+    set_curve(p192)
     x1 = 0xd458e7d127ae671b0c330266d246769353a012073e97acf8
     y1 = 0x325930500d851f336bddc050cf7fb11b5673a1645086df3b
     S = ECPoint(x1, y1, 1)
@@ -26,7 +26,26 @@ using Test
 end
 
 @testset "P-224" begin
-    
+    set_prime(0xffffffffffffffffffffffffffffffff000000000000000000000001)
+    set_curve(p224)
+
+    x1 = 0x6eca814ba59a930843dc814edd6c97da95518df3c6fdf16e9a10bb5b
+    y1 = 0xef4b497f0963bc8b6aec0ca0f259b89cd80994147e05dc6b64d7bf22
+    S = ECPoint(x1, y1, 1)
+
+    x2 = 0xb72b25aea5cb03fb88d7e842002969648e6ef23c5d39ac903826bd6d
+    y2 = 0xc42a8a4d34984f0b71b5b4091af7dceb33ea729c1a2dc8b434f10c34
+    T = ECPoint(x2, y2, 1)
+
+    @test affinify(S + T) == ECPoint(0x236f26d9e84c2f7d776b107bd478ee0a6d2bcfcaa2162afae8d2fd15,
+        0xe53cc0a7904ce6c3746f6a97471297a0b7d5cdf8d536ae25bb0fda70, 1)
+
+    @test affinify(S + S) == ECPoint(0xa9c96f2117dee0f27ca56850ebb46efad8ee26852f165e29cb5cdfc7,
+        0xadf18c84cf77ced4d76d4930417d9579207840bf49bfbf5837dfdd7d, 1)
+
+    d = 0xa78ccc30eaca0fcc8e36b2dd6fbb03df06d37f52711e6363aaf1d73b
+    @test affinify(d * S) == ECPoint(0x96a7625e92a8d72bff1113abdb95777e736a14c6fdaacc392702bca4,
+        0x0f8e5702942a3c5e13cd2fd5801915258b43dfadc70d15dbada3ed10, 1)
 end
 
 @testset "P-256" begin
