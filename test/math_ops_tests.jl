@@ -2,8 +2,7 @@ using ECC
 using Test
 
 @testset "P-192" begin
-    set_prime(0xfffffffffffffffffffffffffffffffeffffffffffffffff)
-    set_curve(p192)
+    set_curve(P192)
     x1 = 0xd458e7d127ae671b0c330266d246769353a012073e97acf8
     y1 = 0x325930500d851f336bddc050cf7fb11b5673a1645086df3b
     S = ECPoint(x1, y1, 1)
@@ -26,8 +25,7 @@ using Test
 end
 
 @testset "P-224" begin
-    set_prime(0xffffffffffffffffffffffffffffffff000000000000000000000001)
-    set_curve(p224)
+    set_curve(P224)
 
     x1 = 0x6eca814ba59a930843dc814edd6c97da95518df3c6fdf16e9a10bb5b
     y1 = 0xef4b497f0963bc8b6aec0ca0f259b89cd80994147e05dc6b64d7bf22
@@ -49,13 +47,13 @@ end
 end
 
 @testset "P-256" begin
-    
+    set_curve(P256)
 end
 
 @testset "P-384" begin
-    
+    set_curve(P384)
 end
 
 @testset "P-521" begin
-    
+    set_curve(P521)
 end

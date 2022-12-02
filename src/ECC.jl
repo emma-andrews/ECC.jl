@@ -1,26 +1,14 @@
-include("curves.jl")
-
 module ECC
 
-export ECPoint, multiply, reduction, reduction192, reduction224, 
-       reduction256, reduction384, reduction521, set_prime, set_curve, 
-       affinify, CurveEnum, null, p192, p224, p256, p384, p521
+include("curves.jl")
 
-# Curve enums for quick switching
-@enum CurveEnum null = 0 p192 = 1 p224 = 2 p256 = 3 p384 = 4 p521 = 5
+export multiply, set_curve, affinify
 
-# Point on elliptic curve
-mutable struct ECPoint
-    x::BigInt
-    y::BigInt
-    z::BigInt
-end
-
-prime = 0
-curve = null
+curve::Curve = EMPTY
 
 function Base.:+(P::ECPoint, Q::ECPoint)
-    global prime
+    global curve
+    prime = curve.prime
     if P.z == 0
         return Q
     elseif Q.z == 0
@@ -56,54 +44,14 @@ function Base.:(==)(P::ECPoint, Q::ECPoint)
 end
 
 function multiply(x::BigInt, y::BigInt, z...)
+    global curve
+    prime = curve.prime
     # reduce result from multiplication
-    result = reduction(x * y)
+    result = mod(x * y, prime)
     for r in z
-        result = reduction(result * r)
+        result = mod(result * r, prime)
     end
     return result
-end
-
-function reduction(x::BigInt)::BigInt
-    # use Barrett reduction for NIST curves
-    global curve
-    if curve == p192
-        return reduction192(x)
-    elseif curve == p224
-        return reduction224(x)
-    elseif curve == p256
-        return reduction256(x)
-    elseif curve == p384
-        return reduction384(x)
-    elseif curve == p521
-        return reduction521(x)
-    end
-end
-
-# todo: update to barrett reduction formulas
-function reduction192(x::BigInt)::BigInt
-    global prime
-    return mod(x, prime)
-end
-
-function reduction224(x::BigInt)::BigInt
-    global prime
-    return mod(x, prime)
-end
-
-function reduction256(x::BigInt)::BigInt
-    global prime
-    return mod(x, prime)
-end
-
-function reduction384(x::BigInt)::BigInt
-    global prime
-    return mod(x, prime)
-end
-
-function reduction521(x::BigInt)::BigInt
-    global prime
-    return mod(x, prime)
 end
 
 function Base.:*(k::BigInt, P::ECPoint)::ECPoint
@@ -124,7 +72,8 @@ function Base.:*(k::BigInt, P::ECPoint)::ECPoint
 end
 
 function affinify(P::ECPoint)::ECPoint
-    global prime
+    global curve
+    prime = curve.prime
     # convert from projective to affine coordinates
     if P.z == 1 || P.z == 0
         # ignore point at infinity and points already in affine
@@ -143,10 +92,6 @@ function Base.show(io::IO, P::ECPoint)
     y = string(P.y, base=16)
     z = string(P.z, base=16)
     print(io, "(", x, ", ", y, ", ", z, ")")
-end
-
-function set_prime(p::BigInt)
-    global prime = p
 end
 
 function set_curve(c::Curve)
