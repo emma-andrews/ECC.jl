@@ -1,8 +1,11 @@
+"Module for performing elliptic curve cryptography on standardized curves"
 module ECC
 
 include("curves.jl")
 
-export multiply, set_curve, affinify
+export multiply, set_curve, affinify, ecdsa_sign
+
+using SHA
 
 curve::Curve = EMPTY
 
@@ -43,6 +46,11 @@ function Base.:(==)(P::ECPoint, Q::ECPoint)
     return P.x == Q.x && P.y == Q.y && P.z == Q.z
 end
 
+"""
+    multiply(x, y, z ...)
+
+Multiply two or more fields together, reducing each step modulo prime
+"""
 function multiply(x::BigInt, y::BigInt, z...)
     global curve
     prime = curve.prime
@@ -71,6 +79,12 @@ function Base.:*(k::BigInt, P::ECPoint)::ECPoint
     return R0
 end
 
+"""
+    affinify(P::ECPoint)
+
+Convert an elliptic curve point from projective representation to affine representation.
+Returns the resulting point in affine representation.
+"""
 function affinify(P::ECPoint)::ECPoint
     global curve
     prime = curve.prime
@@ -96,6 +110,13 @@ end
 
 function set_curve(c::Curve)
     global curve = c
+end
+
+function ecdsa_sign(message::String)
+    global curve
+    e = bytes2hex(sha256(message))
+    bits = ndigits(curve.n, base=2)
+    z = e[1:bits]
 end
 
 end # module ECC

@@ -1,7 +1,14 @@
 export ECPoint, Curve, Weierstrass, Montgomery, TwistedEdwards,
     EMPTY, P192, P224, P256, P384, P521
 
-# Point on elliptic curve
+"""
+Point on an elliptic curve
+
+# Fields
+- x: x-coordinate
+- y: y-coordinate
+- z: z-coordinate, used for computation in projective form
+"""
 mutable struct ECPoint
     x::BigInt
     y::BigInt
